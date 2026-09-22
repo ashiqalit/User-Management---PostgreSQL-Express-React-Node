@@ -65,7 +65,7 @@ const loginUser = async (req, res) => {
 
     if (result.rows.length === 0) {
       return res.status(401).json({
-        messages: "Invalid email or password",
+        message: "Invalid email or password",
       });
     }
 
