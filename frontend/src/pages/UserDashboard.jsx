@@ -10,6 +10,10 @@ function UserDashboard() {
 
   const [profile, setProfile] = useState(null);
 
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [preview, setPreview] = useState("");
+  const [uploading, setUploading] = useState(false);
+
   const [name, setName] = useState("");
 
   const [loading, setLoading] = useState(true);
@@ -77,6 +81,78 @@ function UserDashboard() {
     }
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) {
+      return;
+    }
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowedTypes.includes(file.type)) {
+      setError("Only JPEG, PNG and WebP images are allowed");
+
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image size must be less than 5MB");
+
+      return;
+    }
+
+    setError("");
+    setSelectedImage(file);
+
+    const imagePreview = URL.createObjectURL(file);
+
+    setPreview(imagePreview);
+  };
+
+  const handleUploadPicture = async () => {
+    if (!selectedImage) {
+      setError("Please select an image");
+      return;
+    }
+
+    try {
+      setUploading(true);
+      setError("");
+      setSuccess("");
+
+      const formData = new FormData();
+
+      formData.append("profile_picture", selectedImage);
+
+      const response = await api.post("/users/profile-picture", formData);
+
+      const updatedUser = response.data.user;
+
+      setProfile(updatedUser);
+
+      dispatch(
+        loginSuccess({
+          user: updatedUser,
+          token,
+        }),
+      );
+
+      setSelectedImage(null);
+      setPreview("");
+
+      setSuccess("Profile picture updated successfully");
+    } catch (error) {
+      console.error(error);
+
+      setError(
+        error.response?.data?.message || "Failed to upload profile picture",
+      );
+    } finally {
+      setUploading(false);
+    }
+  };
+
   if (loading) {
     return <p>Loading Profile...</p>;
   }
@@ -87,6 +163,43 @@ function UserDashboard() {
       {error && <p>{error}</p>}
 
       {success && <p>{success}</p>}
+
+      <div>
+        <h2>Profile Picture</h2>
+
+        {profile?.profile_picture && (
+          <div>
+            <img
+              src={`http://localhost:5000/uploads/${profile.profile_picture}`}
+              alt="Profile"
+              width="150"
+              height="150"
+            />
+          </div>
+        )}
+
+        {preview && (
+          <div>
+            <p>Preview:</p>
+
+            <img src={preview} alt="Preview" width="150" height="150" />
+          </div>
+        )}
+
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={handleImageChange}
+        />
+
+        <button
+          type="button"
+          onClick={handleUploadPicture}
+          disabled={!selectedImage || uploading}
+        >
+          {uploading ? "Uploading..." : "Upload Picture"}
+        </button>
+      </div>
 
       {profile && (
         <>
