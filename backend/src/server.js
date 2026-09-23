@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const pool = require("./config/db");
@@ -27,6 +28,7 @@ app.use(
     credentials: true,
   }),
 );
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 //Test route
 app.get("/api/health", (req, res) => {

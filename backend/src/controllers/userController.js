@@ -65,7 +65,46 @@ const updateProfile = async (req, res) => {
   }
 };
 
+const uploadProfilePicture = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        message: "Profile picture is required",
+      });
+    }
+
+    const profilePicture = req.file.filename;
+
+    const result = await pool.query(
+      `UPDATE users
+       SET profile_picture = $1,
+           updated_at = CURRENT_TIMESTAMP
+       WHERE id = $2
+       RETURNING id, name, email, role, profile_picture, created_at, updated_at`,
+      [profilePicture, req.user.id],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Profile picture updated successfully",
+      user: result.rows[0],
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
 module.exports = {
   getProfile,
   updateProfile,
+  uploadProfilePicture,
 };
