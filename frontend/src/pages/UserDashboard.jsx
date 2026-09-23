@@ -214,7 +214,7 @@ function UserDashboard() {
                   />
                 ) : profile.profile_picture ? (
                   <img
-                    src={`http://localhost:5000/uploads/${profile.profile_picture}`}
+                    src={`${import.meta.env.VITE_API_URL}/uploads/${profile.profile_picture}`}
                     alt="Profile"
                     className="h-full w-full object-cover"
                   />

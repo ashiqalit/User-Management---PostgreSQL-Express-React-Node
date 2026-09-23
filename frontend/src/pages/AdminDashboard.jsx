@@ -395,7 +395,7 @@ function AdminDashboard() {
                         <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gray-200 font-semibold text-gray-500">
                           {user.profile_picture ? (
                             <img
-                              src={`http://localhost:5000/uploads/${user.profile_picture}`}
+                              src={`${import.meta.env.VITE_API_URL}/uploads/${user.profile_picture}`}
                               alt={user.name}
                               className="h-full w-full object-cover"
                             />
