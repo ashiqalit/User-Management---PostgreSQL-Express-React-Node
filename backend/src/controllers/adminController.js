@@ -114,11 +114,35 @@ const updateUser = async (req, res) => {
       });
     }
 
-    // validate role if provided
+    const currentUser = existingUser.rows[0];
+
+    // Validate role
     if (role && !["user", "admin"].includes(role)) {
-      return res.status(404).json({
+      return res.status(400).json({
         message: "Invalid role",
       });
+    }
+
+    // Prevent an admin from changing their own role
+    if (Number(id) === req.user.id && role && role !== currentUser.role) {
+      return res.status(400).json({
+        message: "You cannot change your own role",
+      });
+    }
+
+    // Prevent removing the last administrator
+    if (currentUser.role === "admin" && role === "user") {
+      const adminCountResult = await pool.query(
+        "SELECT COUNT(*) FROM users WHERE role = 'admin'",
+      );
+
+      const adminCount = Number(adminCountResult.rows[0].count);
+
+      if (adminCount <= 1) {
+        return res.status(400).json({
+          message: "At least one administrator must remain",
+        });
+      }
     }
 
     // check email uniqueness if email has being changed
