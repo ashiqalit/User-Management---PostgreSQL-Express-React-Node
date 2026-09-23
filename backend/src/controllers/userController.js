@@ -1,4 +1,6 @@
 const pool = require("../config/db");
+const fs = require("fs");
+const path = require("path");
 
 const getProfile = async (req, res) => {
   try {
@@ -73,20 +75,47 @@ const uploadProfilePicture = async (req, res) => {
       });
     }
 
-    const profilePicture = req.file.filename;
+    // Get the user's current profile picture
+    const existingUser = await pool.query(
+      `SELECT profile_picture
+       FROM users
+       WHERE id = $1`,
+      [req.user.id],
+    );
 
+    if (existingUser.rows.length === 0) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    const oldProfilePicture = existingUser.rows[0].profile_picture;
+
+    const newProfilePicture = req.file.filename;
+
+    // Update database with the new picture
     const result = await pool.query(
       `UPDATE users
        SET profile_picture = $1,
            updated_at = CURRENT_TIMESTAMP
        WHERE id = $2
-       RETURNING id, name, email, role, profile_picture, created_at, updated_at`,
-      [profilePicture, req.user.id],
+       RETURNING id, name, email, role,
+                 profile_picture, created_at, updated_at`,
+      [newProfilePicture, req.user.id],
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        message: "User not found",
+    // Delete the old picture after database update
+    if (oldProfilePicture) {
+      const oldFilePath = path.join(
+        __dirname,
+        "../../uploads",
+        oldProfilePicture,
+      );
+
+      fs.unlink(oldFilePath, (error) => {
+        if (error && error.code !== "ENOENT") {
+          console.error("Failed to delete old profile picture:", error);
+        }
       });
     }
 
