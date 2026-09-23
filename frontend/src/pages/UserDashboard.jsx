@@ -158,75 +158,186 @@ function UserDashboard() {
   }
 
   return (
-    <div>
-      <h1>User Dashboard</h1>
-      {error && <p>{error}</p>}
+    <div className="mx-auto max-w-4xl">
+      {/* Page Header */}
 
-      {success && <p>{success}</p>}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
 
-      <div>
-        <h2>Profile Picture</h2>
-
-        {profile?.profile_picture && (
-          <div>
-            <img
-              src={`http://localhost:5000/uploads/${profile.profile_picture}`}
-              alt="Profile"
-              width="150"
-              height="150"
-            />
-          </div>
-        )}
-
-        {preview && (
-          <div>
-            <p>Preview:</p>
-
-            <img src={preview} alt="Preview" width="150" height="150" />
-          </div>
-        )}
-
-        <input
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          onChange={handleImageChange}
-        />
-
-        <button
-          type="button"
-          onClick={handleUploadPicture}
-          disabled={!selectedImage || uploading}
-        >
-          {uploading ? "Uploading..." : "Upload Picture"}
-        </button>
+        <p className="mt-2 text-gray-500">
+          Manage your account information and profile picture.
+        </p>
       </div>
 
-      {profile && (
-        <>
-          <h2>Profile</h2>
+      {/* Loading */}
 
-          <p>
-            <strong>Email:</strong> {profile.email}
-          </p>
+      {loading && (
+        <div className="rounded-2xl bg-white p-8 text-center shadow-sm">
+          <p className="text-gray-500">Loading profile...</p>
+        </div>
+      )}
 
-          <p>
-            <strong>Role:</strong> {profile.role}
-          </p>
+      {/* Error */}
 
-          <form onSubmit={handleUpdateProfile}>
-            <div>
-              <label>Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+      {error && (
+        <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-600">
+          {error}
+        </div>
+      )}
+
+      {/* Success */}
+
+      {success && (
+        <div className="mb-6 rounded-lg bg-green-50 p-4 text-sm text-green-600">
+          {success}
+        </div>
+      )}
+
+      {!loading && profile && (
+        <div className="grid gap-6 md:grid-cols-3">
+          {/* Profile Picture Card */}
+
+          <div className="rounded-2xl bg-white p-6 shadow-sm">
+            <h2 className="mb-6 text-lg font-semibold text-gray-900">
+              Profile Picture
+            </h2>
+
+            <div className="flex flex-col items-center">
+              {/* Current / Preview Image */}
+
+              <div className="mb-5 h-32 w-32 overflow-hidden rounded-full border-4 border-gray-100 bg-gray-200">
+                {preview ? (
+                  <img
+                    src={preview}
+                    alt="Profile preview"
+                    className="h-full w-full object-cover"
+                  />
+                ) : profile.profile_picture ? (
+                  <img
+                    src={`http://localhost:5000/uploads/${profile.profile_picture}`}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-4xl font-bold text-gray-400">
+                    {profile.name?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
+
+              {/* File Input */}
+
+              <label className="mb-3 w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-center text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                Choose Image
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+
+              {/* Upload Button */}
+
+              {selectedImage && (
+                <button
+                  type="button"
+                  onClick={handleUploadPicture}
+                  disabled={uploading}
+                  className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {uploading ? "Uploading..." : "Upload Picture"}
+                </button>
+              )}
+
+              <p className="mt-4 text-center text-xs text-gray-400">
+                JPEG, PNG or WebP
+                <br />
+                Maximum size: 5MB
+              </p>
             </div>
-            <button type="submit" disabled={saving}>
-              {saving ? "Saving..." : "Update Name"}
-            </button>
-          </form>
-        </>
+          </div>
+
+          {/* Profile Information */}
+
+          <div className="rounded-2xl bg-white p-6 shadow-sm md:col-span-2">
+            <h2 className="mb-6 text-lg font-semibold text-gray-900">
+              Account Information
+            </h2>
+
+            <form onSubmit={handleUpdateProfile} className="space-y-5">
+              {/* Name */}
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Name
+                </label>
+
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                />
+              </div>
+
+              {/* Email */}
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Email
+                </label>
+
+                <input
+                  type="email"
+                  value={profile.email}
+                  disabled
+                  className="w-full cursor-not-allowed rounded-lg border border-gray-200 bg-gray-100 px-4 py-3 text-gray-500"
+                />
+
+                <p className="mt-1 text-xs text-gray-400">
+                  Email cannot be changed from this page.
+                </p>
+              </div>
+
+              {/* Role */}
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Role
+                </label>
+
+                <div className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-600">
+                  {profile.role}
+                </div>
+              </div>
+
+              {/* Created Date */}
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Member Since
+                </label>
+
+                <p className="text-sm text-gray-600">
+                  {new Date(profile.created_at).toLocaleDateString()}
+                </p>
+              </div>
+
+              {/* Save */}
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

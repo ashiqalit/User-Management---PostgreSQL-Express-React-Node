@@ -74,9 +74,9 @@ function Register() {
     <div className="flex min-h-[calc(100vh-80px)] items-center justify-center">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
 
-          <p className="mt-2 text-sm text-gray-500">Sign up for an account</p>
+          <p className="mt-2 text-sm text-gray-500">Register a new account</p>
         </div>
 
         {error && (
@@ -92,6 +92,8 @@ function Register() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Name */}
+
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Name
@@ -102,10 +104,12 @@ function Register() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               placeholder="Enter your name"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
+
+          {/* Email */}
 
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -117,10 +121,12 @@ function Register() {
               name="email"
               value={formData.email}
               onChange={handleChange}
+              placeholder="you@example.com"
               className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              placeholder="Enter your email"
             />
           </div>
+
+          {/* Password */}
 
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -132,19 +138,22 @@ function Register() {
               name="password"
               value={formData.password}
               onChange={handleChange}
+              placeholder="Create a password"
               className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              placeholder="Enter your password"
             />
           </div>
+
+          {/* Submit */}
 
           <button
             type="submit"
             disabled={loading}
             className="w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {loading ? "Registering..." : "Register"}
+            {loading ? "Creating account..." : "Register"}
           </button>
         </form>
+
         <p className="mt-6 text-center text-sm text-gray-500">
           Already have an account?{" "}
           <button
