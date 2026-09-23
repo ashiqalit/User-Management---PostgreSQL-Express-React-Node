@@ -5,13 +5,17 @@ import UserDashboard from "./pages/UserDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
+import Layout from "./components/Layout";
 
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
+      <Layout />
       <Routes>
-        <Route path="/" element={<h1>Home Page</h1>} />
+        <Route
+          path="/"
+          element={<h1 className="text-3xl font-bold">Home Page</h1>}
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
