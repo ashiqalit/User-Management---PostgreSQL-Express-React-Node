@@ -17,6 +17,14 @@ function AdminDashboard() {
     role: "user",
   });
   const [creating, setCreating] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [editUser, setEditUser] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "user",
+  });
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -108,6 +116,71 @@ function AdminDashboard() {
     }
   };
 
+  const handleEditClick = (user) => {
+    setEditingUser(user);
+
+    setEditUser({
+      name: user.name,
+      email: user.email,
+      password: "",
+      role: user.role,
+    });
+
+    setError("");
+  };
+
+  const handleEditUserChange = (e) => {
+    const { name, value } = e.target;
+
+    setEditUser((currentUser) => ({
+      ...currentUser,
+      [name]: value,
+    }));
+  };
+
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
+
+    setError("");
+
+    if (!editUser.name.trim() || !editUser.email.trim()) {
+      setError("Name and email are required");
+      return;
+    }
+    try {
+      setUpdating(true);
+
+      const response = await api.put(`/admin/users/${editingUser.id}`, {
+        name: editUser.name.trim(),
+        email: editUser.email.trim(),
+        password: editUser.password,
+        role: editUser.role,
+      });
+
+      const updatedUser = response.data.user;
+
+      setUsers((currentUsers) =>
+        currentUsers.map((currentUser) =>
+          currentUser.id === updatedUser.id ? updatedUser : currentUser,
+        ),
+      );
+      setEditingUser(null);
+
+      setEditUser({
+        name: "",
+        email: "",
+        password: "",
+        role: "user",
+      });
+    } catch (error) {
+      console.error(error);
+
+      setError(error.response?.data?.message || "Failed to update user");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   if (loading) {
     return <p>Loading users..</p>;
   }
@@ -177,6 +250,68 @@ function AdminDashboard() {
           </button>
         </form>
       )}
+
+      {editingUser && (
+        <form onSubmit={handleUpdateUser}>
+          <h3>Edit User: {editingUser.name}</h3>
+
+          <div>
+            <label>Name</label>
+
+            <input
+              type="text"
+              name="name"
+              value={editUser.name}
+              onChange={handleEditUserChange}
+            />
+          </div>
+
+          <div>
+            <label>Email</label>
+
+            <input
+              type="email"
+              name="email"
+              value={editUser.email}
+              onChange={handleEditUserChange}
+            />
+          </div>
+
+          <div>
+            <label>New Password</label>
+
+            <input
+              type="password"
+              name="password"
+              value={editUser.password}
+              onChange={handleEditUserChange}
+              placeholder="Leave empty to keep current password"
+            />
+          </div>
+
+          <div>
+            <label>Role</label>
+
+            <select
+              name="role"
+              value={editUser.role}
+              onChange={handleEditUserChange}
+            >
+              <option value="user">User</option>
+
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <button type="submit" disabled={updating}>
+            {updating ? "Updating..." : "Update User"}
+          </button>
+
+          <button type="button" onClick={() => setEditingUser(null)}>
+            Cancel
+          </button>
+        </form>
+      )}
       <p>Total users: {users.length}</p>
 
       <table border="1">
@@ -198,7 +333,9 @@ function AdminDashboard() {
               <td>{currentUser.email}</td>
               <td>{currentUser.role}</td>
               <td>
-                <button>Edit</button>
+                <button onClick={() => handleEditClick(currentUser)}>
+                  Edit
+                </button>
                 <button onClick={() => handleDelete(currentUser.id)}>
                   Delete
                 </button>
