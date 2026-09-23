@@ -4,10 +4,12 @@ import Register from "./pages/Register";
 import UserDashboard from "./pages/UserDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <BrowserRouter>
+      <Navbar />
       <Routes>
         <Route path="/" element={<h1>Home Page</h1>} />
         <Route path="/login" element={<Login />} />
