@@ -186,164 +186,406 @@ function AdminDashboard() {
   }
 
   return (
-    <div>
-      <h1>Admin Dashboard</h1>
-      <h2>Welcome, {user?.name}</h2>
+    <div className="mx-auto max-w-7xl">
+      {/* Header */}
 
-      {error && <p>{error}</p>}
+      <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
 
-      <h2>User Management</h2>
-      <button onClick={() => setShowCreateForm(!showCreateForm)}>
-        {showCreateForm ? "Cancel" : "Create User"}
-      </button>
+          <p className="mt-2 text-gray-500">
+            Manage users and their account permissions.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setShowCreateForm(!showCreateForm);
+            setError("");
+          }}
+          className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
+        >
+          {showCreateForm ? "Cancel" : "+ Add User"}
+        </button>
+      </div>
+
+      {/* Error */}
+
+      {error && (
+        <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-600">
+          {error}
+        </div>
+      )}
+
+      {/* Create User Form */}
 
       {showCreateForm && (
-        <form onSubmit={handleCreateUser}>
-          <h3>Create New User</h3>
-          <div>
-            <label>Name</label>
-            <input
-              type="text"
-              name="name"
-              value={newUser.name}
-              onChange={handleNewUserChange}
-              placeholder="Enter name"
-            />
-          </div>
+        <div className="mb-8 rounded-2xl bg-white p-6 shadow-sm">
+          <h2 className="mb-6 text-xl font-semibold text-gray-900">
+            Create New User
+          </h2>
 
-          <div>
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              value={newUser.email}
-              onChange={handleNewUserChange}
-              placeholder="Enter mail"
-            />
-          </div>
+          <form
+            onSubmit={handleCreateUser}
+            className="grid gap-5 md:grid-cols-2"
+          >
+            {/* Name */}
 
-          <div>
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              value={newUser.password}
-              onChange={handleNewUserChange}
-              placeholder="Enter password"
-            />
-          </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Name
+              </label>
 
-          <div>
-            <label>Role</label>
-            <select
-              name="role"
-              value={newUser.role}
-              onChange={handleNewUserChange}
-            >
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
+              <input
+                type="text"
+                name="name"
+                value={newUser.name}
+                onChange={handleNewUserChange}
+                placeholder="Enter name"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
 
-          <button type="submit" disabled={creating}>
-            {creating ? "Creating.." : "Create User"}
-          </button>
-        </form>
+            {/* Email */}
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Email
+              </label>
+
+              <input
+                type="email"
+                name="email"
+                value={newUser.email}
+                onChange={handleNewUserChange}
+                placeholder="user@example.com"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
+
+            {/* Password */}
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Password
+              </label>
+
+              <input
+                type="password"
+                name="password"
+                value={newUser.password}
+                onChange={handleNewUserChange}
+                placeholder="Enter password"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
+
+            {/* Role */}
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Role
+              </label>
+
+              <select
+                name="role"
+                value={newUser.role}
+                onChange={handleNewUserChange}
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              >
+                <option value="user">User</option>
+
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            {/* Submit */}
+
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                disabled={creating}
+                className="rounded-lg bg-green-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {creating ? "Creating..." : "Create User"}
+              </button>
+            </div>
+          </form>
+        </div>
       )}
+
+      {/* User Statistics */}
+
+      <div className="mb-6 grid gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl bg-white p-5 shadow-sm">
+          <p className="text-sm text-gray-500">Total Users</p>
+
+          <p className="mt-2 text-3xl font-bold text-gray-900">
+            {users.length}
+          </p>
+        </div>
+
+        <div className="rounded-2xl bg-white p-5 shadow-sm">
+          <p className="text-sm text-gray-500">Administrators</p>
+
+          <p className="mt-2 text-3xl font-bold text-gray-900">
+            {users.filter((user) => user.role === "admin").length}
+          </p>
+        </div>
+
+        <div className="rounded-2xl bg-white p-5 shadow-sm">
+          <p className="text-sm text-gray-500">Regular Users</p>
+
+          <p className="mt-2 text-3xl font-bold text-gray-900">
+            {users.filter((user) => user.role === "user").length}
+          </p>
+        </div>
+      </div>
+
+      {/* Users Table */}
+
+      <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
+        <div className="border-b px-6 py-5">
+          <h2 className="text-xl font-semibold text-gray-900">Users</h2>
+
+          <p className="mt-1 text-sm text-gray-500">
+            View and manage registered users.
+          </p>
+        </div>
+
+        {loading ? (
+          <div className="p-8 text-center text-gray-500">Loading users...</div>
+        ) : users.length === 0 ? (
+          <div className="p-8 text-center text-gray-500">No users found.</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    User
+                  </th>
+
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    Email
+                  </th>
+
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    Role
+                  </th>
+
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    Joined
+                  </th>
+
+                  <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-gray-100">
+                {users.map((user) => (
+                  <tr key={user.id} className="transition hover:bg-gray-50">
+                    {/* User */}
+
+                    <td className="whitespace-nowrap px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gray-200 font-semibold text-gray-500">
+                          {user.profile_picture ? (
+                            <img
+                              src={`http://localhost:5000/uploads/${user.profile_picture}`}
+                              alt={user.name}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            user.name?.charAt(0).toUpperCase()
+                          )}
+                        </div>
+
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {user.name}
+                          </p>
+
+                          <p className="text-xs text-gray-400">ID: {user.id}</p>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Email */}
+
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                      {user.email}
+                    </td>
+
+                    {/* Role */}
+
+                    <td className="whitespace-nowrap px-6 py-4">
+                      <span
+                        className={
+                          user.role === "admin"
+                            ? "rounded-full bg-purple-50 px-3 py-1 text-xs font-medium text-purple-600"
+                            : "rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-600"
+                        }
+                      >
+                        {user.role}
+                      </span>
+                    </td>
+
+                    {/* Date */}
+
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                      {new Date(user.created_at).toLocaleDateString()}
+                    </td>
+
+                    {/* Actions */}
+
+                    <td className="whitespace-nowrap px-6 py-4 text-right">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleEditClick(user)}
+                          className="rounded-lg bg-blue-50 px-3 py-2 text-xs font-medium text-blue-600 transition hover:bg-blue-100"
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(user.id)}
+                          className="rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-600 transition hover:bg-red-100"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Edit User Modal */}
 
       {editingUser && (
-        <form onSubmit={handleUpdateUser}>
-          <h3>Edit User: {editingUser.name}</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Edit User
+                </h2>
 
-          <div>
-            <label>Name</label>
+                <p className="mt-1 text-sm text-gray-500">
+                  Update account information.
+                </p>
+              </div>
 
-            <input
-              type="text"
-              name="name"
-              value={editUser.name}
-              onChange={handleEditUserChange}
-            />
+              <button
+                type="button"
+                onClick={() => setEditingUser(null)}
+                className="rounded-lg px-3 py-2 text-gray-500 hover:bg-gray-100"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateUser} className="space-y-5">
+              {/* Name */}
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Name
+                </label>
+
+                <input
+                  type="text"
+                  name="name"
+                  value={editUser.name}
+                  onChange={handleEditUserChange}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                />
+              </div>
+
+              {/* Email */}
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Email
+                </label>
+
+                <input
+                  type="email"
+                  name="email"
+                  value={editUser.email}
+                  onChange={handleEditUserChange}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                />
+              </div>
+
+              {/* Password */}
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  New Password
+                </label>
+
+                <input
+                  type="password"
+                  name="password"
+                  value={editUser.password}
+                  onChange={handleEditUserChange}
+                  placeholder="Leave blank to keep current password"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                />
+              </div>
+
+              {/* Role */}
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Role
+                </label>
+
+                <select
+                  name="role"
+                  value={editUser.role}
+                  onChange={handleEditUserChange}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                >
+                  <option value="user">User</option>
+
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+
+              {/* Buttons */}
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingUser(null)}
+                  className="rounded-lg border border-gray-300 px-5 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={updating}
+                  className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {updating ? "Updating..." : "Save Changes"}
+                </button>
+              </div>
+            </form>
           </div>
-
-          <div>
-            <label>Email</label>
-
-            <input
-              type="email"
-              name="email"
-              value={editUser.email}
-              onChange={handleEditUserChange}
-            />
-          </div>
-
-          <div>
-            <label>New Password</label>
-
-            <input
-              type="password"
-              name="password"
-              value={editUser.password}
-              onChange={handleEditUserChange}
-              placeholder="Leave empty to keep current password"
-            />
-          </div>
-
-          <div>
-            <label>Role</label>
-
-            <select
-              name="role"
-              value={editUser.role}
-              onChange={handleEditUserChange}
-            >
-              <option value="user">User</option>
-
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
-          <button type="submit" disabled={updating}>
-            {updating ? "Updating..." : "Update User"}
-          </button>
-
-          <button type="button" onClick={() => setEditingUser(null)}>
-            Cancel
-          </button>
-        </form>
+        </div>
       )}
-      <p>Total users: {users.length}</p>
-
-      <table border="1">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {users.map((currentUser) => (
-            <tr key={currentUser.id}>
-              <td>{currentUser.id}</td>
-              <td>{currentUser.name}</td>
-              <td>{currentUser.email}</td>
-              <td>{currentUser.role}</td>
-              <td>
-                <button onClick={() => handleEditClick(currentUser)}>
-                  Edit
-                </button>
-                <button onClick={() => handleDelete(currentUser.id)}>
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 }
